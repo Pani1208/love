@@ -2,31 +2,459 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>love(仮) — 制作中</title>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&family=Shippori+Mincho:wght@600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>夕暮れ、となりで。</title>
+<meta property="og:title" content="夕暮れ、となりで。">
+<meta property="og:description" content="引っ越してきた街で出会う、3人との物語。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&family=Shippori+Mincho:wght@600;800&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow:hidden;background:#2a1a2e;font-family:'Zen Maru Gothic',sans-serif;color:#fff}
-.bg{position:fixed;inset:-4%;background:url(img/bg.webp) center/cover;animation:zoom 30s ease-in-out infinite alternate}
-@keyframes zoom{to{transform:scale(1.08) translateX(-2%)}}
-.veil{position:fixed;inset:0;background:linear-gradient(180deg,rgba(40,20,60,.15),rgba(40,20,60,.05) 40%,rgba(30,10,40,.7))}
-.chars{position:fixed;left:0;right:0;bottom:0;height:78vh;display:flex;justify-content:center;align-items:flex-end;pointer-events:none}
-.chars img{height:100%;max-width:40vw;object-fit:contain;object-position:bottom;margin:0 -4vw;filter:drop-shadow(0 6px 18px rgba(0,0,0,.35));opacity:0;animation:in 1.2s ease-out forwards}
-.chars img:nth-child(1){animation-delay:.3s}.chars img:nth-child(2){animation-delay:.6s;z-index:2}.chars img:nth-child(3){animation-delay:.9s}
-@keyframes in{from{opacity:0;transform:translateY(20px)}to{opacity:1}}
-.t{position:fixed;top:8vh;left:0;right:0;text-align:center;text-shadow:0 2px 12px rgba(80,20,60,.8)}
-.t h1{font-family:'Shippori Mincho',serif;font-size:clamp(38px,9vw,72px);letter-spacing:.1em}
-.t p{margin-top:10px;font-size:15px;opacity:.9}
-.badge{display:inline-block;margin-top:16px;padding:6px 18px;border:1px solid #fff8;border-radius:999px;background:#fff2;backdrop-filter:blur(4px);font-weight:700}
-.petal{position:fixed;top:-20px;width:6px;height:6px;border-radius:50%;background:#ffd9a8;opacity:.8;animation:fall linear infinite}
-@keyframes fall{to{transform:translate(-60px,110vh)}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#000;font-family:'Zen Maru Gothic',sans-serif;color:#fff;user-select:none;-webkit-user-select:none}
+button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none}
+#game{position:fixed;inset:0;max-width:520px;margin:0 auto;overflow:hidden;background:#000}
+.bgl{position:absolute;inset:-6%;background-size:cover;background-position:50% 50%;opacity:0;transition:opacity 1.2s ease;will-change:transform,opacity}
+.bgl.on{opacity:1}
+.bgl.pan{animation:pan 46s ease-in-out infinite alternate}
+@keyframes pan{0%{background-position:22% 50%;transform:scale(1.04)}100%{background-position:78% 50%;transform:scale(1.12)}}
+#fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#tint{position:absolute;inset:0;pointer-events:none;transition:background 1.5s}
+#vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(0,0,0,.55))}
+#chars{position:absolute;left:50%;bottom:22%;width:min(108%,500px);transform:translateX(-50%);pointer-events:none;aspect-ratio:1/1}
+#chars .cw{position:absolute;inset:0;transition:transform .9s cubic-bezier(.2,.8,.2,1),opacity .5s}
+#chars img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:bottom;transition:opacity .28s;filter:drop-shadow(0 8px 20px rgba(0,0,0,.35))}
+.m-in{animation:m-in .6s cubic-bezier(.2,.9,.3,1)}@keyframes m-in{from{opacity:0;transform:translateY(24px)}}
+.m-jump{animation:m-jump .45s cubic-bezier(.3,1.6,.5,1)}@keyframes m-jump{40%{transform:translateY(-22px)}}
+.m-shake{animation:m-shake .4s}@keyframes m-shake{20%{transform:translateX(-10px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(3px)}}
+.m-sink{animation:m-sink .7s ease}@keyframes m-sink{40%{transform:translateY(14px) scale(.98)}}
+.m-nod{animation:m-nod .5s}@keyframes m-nod{50%{transform:translateY(8px)}}
+.m-near{animation:m-near .9s ease}@keyframes m-near{50%{transform:scale(1.07) translateY(10px)}}
+.m-out{animation:m-out .45s forwards}@keyframes m-out{to{opacity:0;transform:translateY(16px)}}
+.breath{animation:breath 4.2s ease-in-out infinite}@keyframes breath{50%{transform:translateY(-3px) scaleY(1.006)}}
+#box{position:absolute;left:8px;right:8px;bottom:10px;height:calc(24% - 4px);min-height:150px;border-radius:18px;background:linear-gradient(180deg,rgba(30,18,40,.72),rgba(20,10,28,.88));border:1px solid rgba(255,220,230,.28);box-shadow:0 10px 30px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.12);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:26px 18px 14px;transition:opacity .3s,transform .3s}
+#box.hide{opacity:0;transform:translateY(20px);pointer-events:none}
+#name{position:absolute;left:14px;top:-15px;padding:4px 16px 5px;border-radius:999px;font-weight:700;font-size:15px;background:linear-gradient(90deg,#ff8fae,#ffb48a);color:#3a1020;box-shadow:0 4px 10px rgba(0,0,0,.3);transition:opacity .2s}
+#name.none{opacity:0}
+#text{font-size:16.5px;line-height:1.85;letter-spacing:.02em;text-shadow:0 1px 3px rgba(0,0,0,.6);white-space:pre-wrap}
+#text.narr{color:#f4e8d8}
+#next{position:absolute;right:16px;bottom:10px;font-size:12px;color:#ffc4d4;animation:nx 1s ease-in-out infinite;opacity:0}
+#next.on{opacity:1}
+@keyframes nx{50%{transform:translateY(4px)}}
+#tap{position:absolute;inset:0}
+#ui{position:absolute;right:8px;top:8px;display:flex;gap:6px;z-index:8}
+#ui button{font-size:11px;font-weight:700;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.25);letter-spacing:.06em}
+#ui button.on{background:#ff8fae;color:#3a1020}
+#day{position:absolute;left:10px;top:10px;font-family:'Shippori Mincho',serif;font-size:13px;padding:5px 12px;border-radius:999px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.2);z-index:8;display:none}
+#choices{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;align-items:center;gap:12px;padding:0 24px 18%;z-index:6;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.35))}
+#choices.on{display:flex}
+.cho{width:100%;max-width:400px;padding:14px 18px;border-radius:14px;font-size:15.5px;font-weight:700;background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,236,242,.9));color:#4a1a30;box-shadow:0 6px 18px rgba(0,0,0,.35),0 0 0 1px rgba(255,160,190,.6);opacity:0;transform:translateY(14px);animation:cho .45s forwards;position:relative}
+.cho:before{content:'♡';position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#ff7fa2;font-size:14px}
+.cho:active{transform:scale(.97)}
+.cho.pick{animation:pick .5s forwards}
+@keyframes cho{to{opacity:1;transform:none}}
+@keyframes pick{30%{transform:scale(1.05);background:#ff8fae;color:#fff}100%{opacity:0;transform:scale(1.05)}}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:9}
+#black{position:absolute;inset:0;background:#000;opacity:1;pointer-events:none;z-index:9;transition:opacity 1s}
+.lb{position:absolute;left:0;right:0;height:0;background:#000;z-index:5;transition:height 1.2s cubic-bezier(.6,0,.2,1)}
+#lbT{top:0}#lbB{bottom:0}
+.lbon #lbT,.lbon #lbB{height:9%}
+.heart{position:absolute;font-size:22px;color:#ff7fa2;text-shadow:0 0 10px #fff,0 0 20px #ff9ab8;pointer-events:none;z-index:7;animation:heart 1.6s ease-out forwards}
+@keyframes heart{0%{opacity:0;transform:translate(0,0) scale(.4)}15%{opacity:1;transform:translate(0,-20px) scale(1.2)}100%{opacity:0;transform:translate(var(--dx),-170px) scale(.8)}}
+#toast{position:absolute;left:50%;top:18%;transform:translateX(-50%);padding:8px 18px;border-radius:999px;background:rgba(255,255,255,.92);color:#c03a68;font-weight:700;font-size:14px;z-index:7;opacity:0;pointer-events:none;white-space:nowrap;box-shadow:0 6px 16px rgba(0,0,0,.25)}
+#toast.on{animation:toast 1.8s ease forwards}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,10px)}15%,75%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-10px)}}
+.scr{position:absolute;inset:0;z-index:10;display:none;flex-direction:column;align-items:center;overflow:hidden}
+.scr.on{display:flex}
+#title .tbg{position:absolute;inset:-6%;background:url(img/river3.webp) center/cover;animation:pan 40s ease-in-out infinite alternate}
+#title .tveil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(60,20,70,.25),transparent 35%,rgba(30,10,40,.8))}
+#title .tch{position:absolute;left:0;right:0;bottom:0;height:70%;display:flex;justify-content:center;align-items:flex-end}
+#title .tch img{height:100%;max-width:42%;object-fit:contain;object-position:bottom;margin:0 -5%;opacity:0;animation:tin 1.4s ease-out forwards}
+#title .tch img:nth-child(1){animation-delay:.4s}#title .tch img:nth-child(2){animation-delay:.7s;z-index:2}#title .tch img:nth-child(3){animation-delay:1s}
+@keyframes tin{from{opacity:0;transform:translateY(30px)}to{opacity:1}}
+.logo{position:relative;margin-top:9vh;text-align:center;text-shadow:0 2px 14px rgba(100,20,60,.85)}
+.logo h1{font-family:'Shippori Mincho',serif;font-weight:800;font-size:clamp(34px,10vw,54px);letter-spacing:.14em;line-height:1.25}
+.logo h1 small{display:block;font-size:.42em;letter-spacing:.5em;margin-top:6px;opacity:.9}
+.tmenu{position:absolute;bottom:6vh;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:10px;z-index:3}
+.tbtn{min-width:220px;padding:12px 24px;border-radius:999px;font-size:16px;font-weight:700;background:rgba(255,255,255,.9);color:#5a1a3a;box-shadow:0 6px 18px rgba(0,0,0,.35);letter-spacing:.1em}
+.tbtn.sub{background:rgba(0,0,0,.45);color:#fff;border:1px solid rgba(255,255,255,.35);font-size:14px}
+.tap2{font-size:14px;letter-spacing:.3em;animation:nx 1.6s ease-in-out infinite;text-shadow:0 2px 8px #000}
+#map{background:rgba(10,5,15,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);justify-content:center;padding:20px;gap:12px}
+#map h2{font-family:'Shippori Mincho',serif;font-size:22px;letter-spacing:.12em;text-shadow:0 2px 10px #000}
+#map .msub{font-size:13px;opacity:.85;margin-bottom:6px}
+.card{width:100%;max-width:420px;height:96px;border-radius:16px;position:relative;overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.25);opacity:0;animation:cho .5s forwards;text-align:left}
+.card .cbg{position:absolute;inset:0;background-size:cover;background-position:center}
+.card .cv{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.7),rgba(0,0,0,.15) 70%)}
+.card .cf{position:absolute;right:4px;bottom:0;height:118%;width:auto}
+.card .ct{position:absolute;left:16px;top:14px}
+.card .ct b{display:block;font-size:17px;letter-spacing:.06em}
+.card .ct span{font-size:12px;opacity:.85}
+.card .hs{position:absolute;left:16px;bottom:12px;font-size:14px;color:#ff8fae;letter-spacing:2px;text-shadow:0 0 6px rgba(255,140,180,.7)}
+.card:active{transform:scale(.98)}
+#nameScr{background:rgba(10,5,15,.8);justify-content:center;gap:16px;padding:24px}
+#nameScr p{font-size:15px;text-align:center;line-height:1.8}
+#nameIn{font-family:inherit;font-size:20px;text-align:center;padding:10px 16px;border-radius:12px;border:2px solid #ff8fae;background:#fff;color:#3a1020;width:220px;outline:none}
+#log{background:rgba(10,5,15,.92);padding:50px 18px 20px;overflow-y:auto;display:none;z-index:12;align-items:stretch}
+#log.on{display:block}
+#log .ll{margin:0 0 14px;font-size:14px;line-height:1.7}
+#log .ll b{color:#ff9ab8;display:block;font-size:12px}
+#log .close{position:fixed;top:10px;right:calc(50% - min(50%,260px) + 10px);padding:6px 14px;border-radius:999px;background:#ff8fae;color:#3a1020;font-weight:700}
+#endScr{background:#000;justify-content:center;gap:14px;text-align:center;padding:24px}
+#endScr .et{font-family:'Shippori Mincho',serif;font-size:13px;letter-spacing:.5em;opacity:.7}
+#endScr h2{font-family:'Shippori Mincho',serif;font-size:28px;letter-spacing:.15em}
+#endScr p{font-size:14px;line-height:1.9;opacity:.85}
+#endList{background:rgba(10,5,15,.85);justify-content:center;gap:10px;padding:24px}
+#endList .er{width:100%;max-width:340px;padding:12px 16px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);font-size:14px;display:flex;justify-content:space-between}
+#endList .er.got{background:rgba(255,143,174,.2);border-color:#ff8fae}
+#err{position:fixed;left:0;right:0;bottom:0;z-index:100;background:#c0262d;color:#fff;font-size:12px;padding:6px 10px;display:none;white-space:pre-wrap}
 </style>
 </head>
 <body>
-<div class="bg"></div><div class="veil"></div>
-<div class="t"><h1>love(仮)</h1><p>夕暮れの街で出会う、3人との物語</p><span class="badge">ただいま制作中</span></div>
-<div class="chars"><img src="img/C.webp" alt=""><img src="img/A.webp" alt=""><img src="img/B.webp" alt=""></div>
-<script>for(let i=0;i<18;i++){const p=document.createElement('div');p.className='petal';p.style.left=Math.random()*110+'%';p.style.animationDuration=(8+Math.random()*8)+'s';p.style.animationDelay=(-Math.random()*16)+'s';document.body.appendChild(p)}</script>
+<div id="game">
+  <div class="bgl" id="bg0"></div><div class="bgl" id="bg1"></div>
+  <div id="tint"></div>
+  <div id="chars"><div class="cw" id="cw"><div id="cm" style="position:absolute;inset:0"><img id="ci0" alt=""><img id="ci1" alt="" style="opacity:0"></div></div></div>
+  <canvas id="fx"></canvas>
+  <div id="vig"></div>
+  <div class="lb" id="lbT"></div><div class="lb" id="lbB"></div>
+  <div id="tap"></div>
+  <div id="box" class="hide"><div id="name" class="none"></div><div id="text"></div><div id="next">▼</div></div>
+  <div id="choices"></div>
+  <div id="day"></div>
+  <div id="ui" style="display:none"><button id="bLog">LOG</button><button id="bAuto">AUTO</button><button id="bSkip">SKIP</button><button id="bMute">♪</button></div>
+  <div id="toast"></div>
+  <div class="scr" id="title"><div class="tbg"></div><div class="tveil"></div>
+    <div class="tch"><img src="img/C.webp" alt=""><img src="img/A.webp" alt=""><img src="img/B.webp" alt=""></div>
+    <div class="logo"><h1>夕暮れ、<br>となりで。<small>YUUGURE TONARI DE</small></h1></div>
+    <div class="tmenu" id="tmenu"><div class="tap2">― TAP TO START ―</div></div>
+  </div>
+  <div class="scr" id="nameScr"><p>あなたの名前を教えてください<br><span style="font-size:12px;opacity:.7">(8文字まで・あとから変えられません)</span></p><input id="nameIn" maxlength="8" value="ハルト"><button class="tbtn" id="nameOk">決定</button></div>
+  <div class="scr" id="map"></div>
+  <div class="scr" id="endScr"></div>
+  <div class="scr" id="endList"></div>
+  <div class="scr" id="log"></div>
+  <div id="flash"></div>
+  <div id="black"></div>
+</div>
+<div id="err"></div>
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s);const rnd=Math.random;const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function showErr(e){const el=$('#err');el.style.display='block';el.textContent='エラー: '+(e&&e.message?e.message:String(e));console.error(e)}
+window.addEventListener('error',ev=>showErr(ev.error||ev.message));
+const LS={get(k,d){try{const v=localStorage.getItem('yt_'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('yt_'+k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem('yt_'+k)}catch(e){}}};
+
+/* ============ characters ============ */
+const CH={
+  A:{name:'凛',full:'早瀬 凛',col:'#7a9cff',pitch:520,place:'夜の商店街',placeSub:'仕事帰りの先輩',bg:'street'},
+  B:{name:'ちなつ',full:'日向 ちなつ',col:'#ffb46a',pitch:640,place:'川沿いの遊歩道',placeSub:'夕焼けを描く人',bg:'river1'},
+  C:{name:'栞',full:'白石 栞',col:'#8fd6a8',pitch:580,place:'古書店 月白堂',placeSub:'本屋の店員さん',bg:'book2'}
+};
+const FACES={A:['n','smile','laugh','angry','huff','shy','surp','sulk'],B:['n','smile','laugh','q','smug','shy','surp','pout'],C:['n','smile','laugh','sad','fluster','shy','surp','tear']};
+const BGS=['street','river1','river2','river3','book1','book2','cafe'];
+// preload
+const pre=[];for(const k in FACES)for(const f of FACES[k]){const i=new Image();i.src=`img/f/${k}_${f}.webp`;pre.push(i)}for(const b of BGS){const i=new Image();i.src=`img/${b}.webp`;pre.push(i)}
+
+/* ============ audio ============ */
+let AC=null,MG=null,RV=null,BGG=null,AMB=null,NB=null,muted=LS.get('muted',false);
+function audio(){if(!AC){try{const C=window.AudioContext||window.webkitAudioContext;AC=new C();MG=AC.createGain();MG.gain.value=muted?0:.9;MG.connect(AC.destination);
+  RV=AC.createConvolver();const len=AC.sampleRate*2.8,ir=AC.createBuffer(2,len,AC.sampleRate);for(let c=0;c<2;c++){const d=ir.getChannelData(c);for(let i=0;i<len;i++)d[i]=(rnd()*2-1)*Math.pow(1-i/len,3)}RV.buffer=ir;const rg=AC.createGain();rg.gain.value=.35;RV.connect(rg);rg.connect(MG);
+  BGG=AC.createGain();BGG.gain.value=.5;BGG.connect(MG);BGG.connect(RV);
+  const n=AC.sampleRate*2;NB=AC.createBuffer(1,n,AC.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<n;i++)d[i]=rnd()*2-1}catch(e){AC=null}}
+  if(AC&&AC.state==='suspended')AC.resume();return AC}
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+function piano(m,t,dur,vol,bus){const a=AC;const f=mtof(m);const g=a.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.008);g.gain.exponentialRampToValueAtTime(vol*.35,t+.25);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  const lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.setValueAtTime(Math.min(6000,f*6),t);lp.frequency.exponentialRampToValueAtTime(Math.max(400,f*1.5),t+dur);
+  [['triangle',1,1],['sine',2,.3],['sine',3,.08]].forEach(([ty,mul,v])=>{const o=a.createOscillator();o.type=ty;o.frequency.value=f*mul;const og=a.createGain();og.gain.value=v;o.connect(og);og.connect(lp);o.start(t);o.stop(t+dur+.05)});
+  lp.connect(g);g.connect(bus||BGG)}
+function pad(ms,t,dur,vol){const a=AC;const g=a.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+dur*.35);g.gain.exponentialRampToValueAtTime(.0001,t+dur);const lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=900;lp.Q.value=.5;
+  ms.forEach(m=>[-6,6].forEach(dt=>{const o=a.createOscillator();o.type='sawtooth';o.frequency.value=mtof(m);o.detune.value=dt;o.connect(lp);o.start(t);o.stop(t+dur+.1)}));lp.connect(g);g.connect(BGG)}
+function nz(t,dur,o){const a=AC;const s=a.createBufferSource();s.buffer=NB;s.loop=true;const f=a.createBiquadFilter();f.type=o.type||'bandpass';f.frequency.setValueAtTime(o.f||1000,t);if(o.to)f.frequency.exponentialRampToValueAtTime(o.to,t+dur);f.Q.value=o.q||1;const g=a.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(o.vol||.2,t+(o.att||.005));g.gain.exponentialRampToValueAtTime(.0001,t+dur);s.connect(f);f.connect(g);g.connect(o.bus||MG);s.start(t,rnd());s.stop(t+dur+.05)}
+function tone(f,t,dur,vol,type,to){const a=AC;const o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(to)o.frequency.exponentialRampToValueAtTime(to,t+dur);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(MG);g.connect(RV);o.start(t);o.stop(t+dur+.05)}
+const SFX={
+  blip(p){if(!AC||muted)return;tone(p*(1+rnd()*.06),AC.currentTime,.05,.018,'sine')},
+  choice(){if(!AC)return;const t=AC.currentTime;[76,83,88].forEach((m,i)=>piano(m,t+i*.06,1.2,.12,MG))},
+  open(){if(!AC)return;const t=AC.currentTime;[72,79].forEach((m,i)=>piano(m,t+i*.05,.8,.07,MG))},
+  heart(){if(!AC)return;const t=AC.currentTime;[84,88,91,96].forEach((m,i)=>{tone(mtof(m),t+i*.07,.5,.05,'sine')});nz(t,.6,{type:'highpass',f:7000,vol:.03})},
+  bell(){if(!AC)return;const t=AC.currentTime;[[2093,0],[2637,.12]].forEach(([f,d])=>{tone(f,t+d,1.4,.06,'sine');tone(f*2.76,t+d,.6,.015,'sine')})},
+  can(){if(!AC)return;const t=AC.currentTime;tone(1800,t,.03,.08,'square',900);nz(t+.02,.5,{type:'highpass',f:3000,to:6000,vol:.2,att:.01})},
+  page(){if(!AC)return;nz(AC.currentTime,.35,{type:'bandpass',f:2500,to:5000,q:.8,vol:.08,att:.08})},
+  beat(){if(!AC)return;const t=AC.currentTime;tone(70,t,.18,.35,'sine',45);tone(66,t+.22,.2,.25,'sine',42)},
+  whoosh(){if(!AC)return;nz(AC.currentTime,.7,{type:'bandpass',f:400,to:2400,q:.7,vol:.08,att:.3})},
+  umbrella(){if(!AC)return;nz(AC.currentTime,.25,{type:'lowpass',f:1200,vol:.15})},
+  chime(){if(!AC)return;const t=AC.currentTime;[79,84,88,91,96].forEach((m,i)=>piano(m,t+i*.12,2.4,.1,MG))}
+};
+/* --- BGM --- */
+const SONGS={
+  title:{bpm:70,ch:[[53,57,60,64],[52,55,59,62],[50,53,57,60],[55,59,62,65]],pat:'arp',pad:.03,mel:.5},
+  day:{bpm:84,ch:[[48,52,55,59],[45,48,52,55],[53,57,60,64],[55,59,62,65]],pat:'box',pad:.018,mel:.4},
+  sunset:{bpm:72,ch:[[53,57,60,64],[52,55,59,62],[50,53,57,60],[55,59,62,67]],pat:'arp',pad:.03,mel:.55},
+  rain:{bpm:64,ch:[[45,48,52,55],[41,45,48,52],[48,52,55,59],[43,47,50,55]],pat:'sparse',pad:.025,mel:.3},
+  love:{bpm:76,ch:[[53,57,60,64],[55,59,62,65],[52,55,59,64],[57,60,64,67],[50,53,57,60],[55,59,62,65],[48,52,55,60],[48,52,55,59]],pat:'arp',pad:.045,mel:.75},
+  sad:{bpm:60,ch:[[45,48,52],[41,45,48],[43,47,50],[40,43,47]],pat:'sparse',pad:.03,mel:.25},
+  none:null
+};
+const BGM={cur:'none',next:0,step:0,timer:null,
+  play(name){if(this.cur===name)return;this.cur=name;audio();if(!AC)return;this.step=0;this.next=AC.currentTime+.2;if(BGG){BGG.gain.cancelScheduledValues(AC.currentTime);BGG.gain.setValueAtTime(.0001,AC.currentTime);BGG.gain.exponentialRampToValueAtTime(.5,AC.currentTime+2)}if(!this.timer)this.timer=setInterval(()=>this.tick(),60)},
+  tick(){const s=SONGS[this.cur];if(!AC||!s||muted)return;const sp=60/s.bpm/2;while(this.next<AC.currentTime+.2){this.note(s,this.step,this.next,sp);this.next+=sp;this.step++}},
+  note(s,st,t,sp){const bar=Math.floor(st/8)%s.ch.length,b=st%8,c=s.ch[bar];
+    if(b===0){piano(c[0]-12,t,sp*8,.09);pad(c.map(x=>x+12),t,sp*8.2,s.pad)}
+    if(s.pat==='arp'){const seq=[1,2,3,2,1+12-12,3,2,3];const m=c[seq[b]%c.length]+(b>3?12:0);piano(m+12,t,sp*3,.05)}
+    else if(s.pat==='box'){if(b%2===0){piano(c[(b/2)%c.length]+24,t,sp*2.5,.04)}if(b===4)piano(c[0],t,sp*4,.05)}
+    else if(s.pat==='sparse'){if(b===0||b===3||b===6)piano(c[[1,2,3][Math.floor(b/3)]%c.length]+12,t,sp*5,.045)}
+    if(rnd()<s.mel*.5&&(b===2||b===6||b===4)){const sc=[0,2,4,7,9];const root=c[0];const m=root+24+sc[Math.floor(rnd()*5)];piano(m,t,sp*4,.055)}}
+};
+let rainNode=null;
+function ambience(kind){if(!AC)return;if(rainNode){try{rainNode.g.gain.setTargetAtTime(.0001,AC.currentTime,.5);const r=rainNode;setTimeout(()=>{try{r.s.stop()}catch(e){}},2500)}catch(e){}rainNode=null}
+  if(kind==='rain'){const s=AC.createBufferSource();s.buffer=NB;s.loop=true;const f=AC.createBiquadFilter();f.type='lowpass';f.frequency.value=2200;const f2=AC.createBiquadFilter();f2.type='highpass';f2.frequency.value=300;const g=AC.createGain();g.gain.setValueAtTime(.0001,AC.currentTime);g.gain.exponentialRampToValueAtTime(.12,AC.currentTime+2);s.connect(f);f.connect(f2);f2.connect(g);g.connect(MG);s.start();rainNode={s,g}}
+  if(kind==='river'){const s=AC.createBufferSource();s.buffer=NB;s.loop=true;const f=AC.createBiquadFilter();f.type='bandpass';f.frequency.value=500;f.Q.value=.6;const g=AC.createGain();g.gain.setValueAtTime(.0001,AC.currentTime);g.gain.exponentialRampToValueAtTime(.05,AC.currentTime+2);s.connect(f);f.connect(g);g.connect(MG);s.start();rainNode={s,g}}}
+
+/* ============ fx canvas ============ */
+const cv=$('#fx'),cx=cv.getContext('2d');let W=390,H=844,DPR=1;let FX='none',parts=[];
+function resize(){const r=$('#game').getBoundingClientRect();W=r.width;H=r.height;DPR=Math.min(2,window.devicePixelRatio||1);cv.width=W*DPR;cv.height=H*DPR}
+window.addEventListener('resize',resize);
+function setFX(k){FX=k;parts=[];
+  if(k==='rain')for(let i=0;i<140;i++)parts.push({x:rnd()*W,y:rnd()*H,v:700+rnd()*500,l:10+rnd()*18,a:.15+rnd()*.3});
+  if(k==='sunset')for(let i=0;i<40;i++)parts.push({x:rnd()*W,y:rnd()*H,v:6+rnd()*14,r:1+rnd()*2.5,p:rnd()*6});
+  if(k==='motes')for(let i=0;i<46;i++)parts.push({x:rnd()*W,y:rnd()*H,v:3+rnd()*8,r:.6+rnd()*1.8,p:rnd()*6});
+  if(k==='sparkle')for(let i=0;i<60;i++)parts.push({x:rnd()*W,y:rnd()*H,v:10+rnd()*30,r:1+rnd()*2.5,p:rnd()*6});
+}
+let splash=[];
+function drawFX(dt,t){cx.setTransform(DPR,0,0,DPR,0,0);cx.clearRect(0,0,W,H);
+  if(FX==='rain'){cx.strokeStyle='rgba(200,215,255,.5)';cx.lineWidth=1.2;for(const p of parts){p.y+=p.v*dt;p.x-=p.v*dt*.12;if(p.y>H){if(rnd()<.35)splash.push({x:p.x,y:H*(.62+rnd()*.38),t:0});p.y=-20;p.x=rnd()*W*1.1}cx.globalAlpha=p.a;cx.beginPath();cx.moveTo(p.x,p.y);cx.lineTo(p.x+p.l*.12,p.y-p.l);cx.stroke()}
+    cx.globalAlpha=1;for(const s of splash){s.t+=dt;cx.strokeStyle=`rgba(210,220,255,${.5*(1-s.t/.35)})`;cx.beginPath();cx.ellipse(s.x,s.y,2+s.t*30,1+s.t*8,0,0,Math.PI*2);cx.stroke()}splash=splash.filter(s=>s.t<.35)}
+  if(FX==='sunset'){const g=cx.createRadialGradient(W*.2,H*.28,10,W*.2,H*.28,W*.9);g.addColorStop(0,'rgba(255,190,120,.28)');g.addColorStop(.4,'rgba(255,120,120,.08)');g.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=g;cx.fillRect(0,0,W,H);
+    for(let i=0;i<4;i++){const k=.25+i*.22;cx.fillStyle=`rgba(255,${200-i*20},${150+i*20},${.08+.03*Math.sin(t+i)})`;cx.beginPath();cx.arc(W*.2+(W*.5-W*.2)*k*2,H*.28+(H*.55-H*.28)*k*2,8+i*10,0,Math.PI*2);cx.fill()}
+    for(const p of parts){p.y-=p.v*dt;p.x+=Math.sin(t*.8+p.p)*.3;if(p.y<0){p.y=H;p.x=rnd()*W}cx.fillStyle=`rgba(255,220,170,${.35+.35*Math.sin(t*2+p.p)})`;cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);cx.fill()}}
+  if(FX==='motes'){cx.save();cx.globalCompositeOperation='lighter';const g=cx.createLinearGradient(W*.9,0,W*.2,H);g.addColorStop(0,'rgba(255,220,160,.12)');g.addColorStop(1,'rgba(255,220,160,0)');cx.fillStyle=g;cx.beginPath();cx.moveTo(W*.55,0);cx.lineTo(W,0);cx.lineTo(W*.6,H);cx.lineTo(W*.1,H);cx.fill();cx.restore();
+    for(const p of parts){p.y+=Math.sin(t*.5+p.p)*.15;p.x+=p.v*dt*.4;if(p.x>W)p.x=0;cx.fillStyle=`rgba(255,240,200,${.25+.3*Math.sin(t*1.5+p.p)})`;cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);cx.fill()}}
+  if(FX==='sparkle'){for(const p of parts){p.y-=p.v*dt;if(p.y<0){p.y=H;p.x=rnd()*W}const a=.4+.6*Math.abs(Math.sin(t*3+p.p));cx.fillStyle=`rgba(255,230,240,${a})`;cx.save();cx.translate(p.x,p.y);cx.rotate(t+p.p);const r=p.r*2.2;cx.beginPath();cx.moveTo(0,-r);cx.lineTo(r*.25,-r*.25);cx.lineTo(r,0);cx.lineTo(r*.25,r*.25);cx.lineTo(0,r);cx.lineTo(-r*.25,r*.25);cx.lineTo(-r,0);cx.lineTo(-r*.25,-r*.25);cx.fill();cx.restore()}}
+}
+
+/* ============ state ============ */
+let S=null;
+const newState=()=>({name:'ハルト',turn:0,aff:{A:0,B:0,C:0},ev:{A:0,B:0,C:0}});
+const ENDS=LS.get('ends',{});
+const TURNS=['4月 第2週','4月 第3週','4月 第4週','5月 第1週'];
+
+/* ============ scene engine ============ */
+let bgCur=0,bgName='';
+function setBG(name,fast){const nl=$('#bg'+(1-bgCur)),ol=$('#bg'+bgCur);nl.style.backgroundImage=`url(img/${name}.webp)`;nl.classList.add('pan');nl.style.transition=fast?'none':'';nl.classList.add('on');ol.classList.remove('on');bgCur=1-bgCur;bgName=name}
+const TINT={none:'transparent',night:'rgba(20,20,70,.18)',sunset:'rgba(255,120,80,.08)',warm:'rgba(255,190,120,.06)',dim:'rgba(0,0,0,.35)'};
+let curCh=null,curFace=null,imgFront=0;
+function showChar(k,f,motion){const cw=$('#cw'),cm=$('#cm');f=f||'n';
+  if(k!==curCh){curCh=k;curFace=f;const i0=$('#ci0'),i1=$('#ci1');i0.src=`img/f/${k}_${f}.webp`;i0.style.opacity=1;i1.style.opacity=0;imgFront=0;cw.style.opacity=1;restart(cm,'m-in');updateNear();return}
+  if(f!==curFace){curFace=f;const a=$('#ci'+imgFront),b=$('#ci'+(1-imgFront));b.src=`img/f/${k}_${f}.webp`;b.onload=()=>{b.style.opacity=1;a.style.opacity=0};if(b.complete){b.style.opacity=1;a.style.opacity=0}imgFront=1-imgFront}
+  if(motion)restart(cm,'m-'+motion)}
+function hideChar(){if(!curCh)return;const cm=$('#cm');restart(cm,'m-out');curCh=null;curFace=null;setTimeout(()=>{if(!curCh){$('#cw').style.opacity=0;cm.className=''}},450)}
+function restart(el,cls){el.classList.remove('m-in','m-jump','m-shake','m-sink','m-nod','m-near','m-out');void el.offsetWidth;el.classList.add(cls)}
+function updateNear(){if(!curCh||!S)return;const a=S.aff[curCh]||0;const sc=1+Math.min(a,9)*.018;$('#cw').style.transform=`scale(${sc}) translateY(${Math.min(a,9)*1.2}%)`}
+function hearts(n){const r=$('#game').getBoundingClientRect();for(let i=0;i<n*4;i++){const h=document.createElement('div');h.className='heart';h.textContent='♥';h.style.left=(W/2-20+(rnd()-.5)*W*.5)+'px';h.style.top=(H*.45+(rnd()-.5)*80)+'px';h.style.setProperty('--dx',((rnd()-.5)*90)+'px');h.style.animationDelay=(i*.08)+'s';h.style.fontSize=(16+rnd()*16)+'px';$('#game').appendChild(h);setTimeout(()=>h.remove(),2200)}}
+function toast(s){const t=$('#toast');t.textContent=s;t.classList.remove('on');void t.offsetWidth;t.classList.add('on')}
+function flash(a=1,ms=600){const f=$('#flash');f.style.transition='none';f.style.opacity=a;void f.offsetWidth;f.style.transition=`opacity ${ms}ms ease`;f.style.opacity=0}
+function shake(px=8){const g=$('#game');g.animate([{transform:'translate(0,0)'},{transform:`translate(${-px}px,${px/2}px)`},{transform:`translate(${px}px,${-px/2}px)`},{transform:'translate(0,0)'}],{duration:350})}
+function black(on,ms=900){return new Promise(r=>{const b=$('#black');b.style.transition=`opacity ${ms}ms`;b.style.opacity=on?1:0;setTimeout(r,ms)})}
+const wait=ms=>new Promise(r=>setTimeout(r,skip?Math.min(ms,30):ms));
+
+/* --- text --- */
+let typing=false,typeDone=null,fullText='',auto=false,skip=false,waitTap=null,logArr=[];
+const box=$('#box'),tx=$('#text'),nm=$('#name'),nxt=$('#next');
+function fill(s){return s.replace(/\{N\}/g,S?S.name:'ハルト')}
+function say(who,face,text,motion){return new Promise(async res=>{
+  text=fill(text);let pitch=440,label='';
+  if(who&&CH[who]){label=CH[who].name;pitch=CH[who].pitch;showChar(who,face,motion)}else if(who==='N'){label=S.name;pitch=360}else if(who){label=who}
+  box.classList.remove('hide');nm.textContent=label;nm.classList.toggle('none',!label);tx.classList.toggle('narr',!label);
+  if(who&&CH[who])nm.style.background=`linear-gradient(90deg,${CH[who].col},#ffb4c8)`;else nm.style.background='';
+  logArr.push({n:label,t:text});if(logArr.length>200)logArr.shift();
+  nxt.classList.remove('on');tx.textContent='';typing=true;fullText=text;let i=0;
+  const speed=skip?0:28;
+  await new Promise(r=>{typeDone=r;if(speed===0){tx.textContent=text;typing=false;r();return}
+    const step=()=>{if(!typing){tx.textContent=text;r();return}i++;tx.textContent=text.slice(0,i);if(i%2===0&&label)SFX.blip(pitch);if(i>=text.length){typing=false;r();return}const ch=text[i-1];setTimeout(step,'。、!?…'.includes(ch)?speed*5:speed)};step()});
+  nxt.classList.add('on');
+  if(skip){setTimeout(res,40);return}
+  let at=null;if(auto)at=setTimeout(()=>{waitTap=null;res()},900+text.length*45);
+  waitTap=()=>{if(at)clearTimeout(at);res()};
+})}
+$('#tap').addEventListener('click',()=>{audio();if(typing){typing=false;return}if(waitTap){const w=waitTap;waitTap=null;w()}});
+
+function choose(opts){return new Promise(res=>{skip=false;$('#bSkip').classList.remove('on');const c=$('#choices');c.innerHTML='';c.classList.add('on');SFX.open();
+  opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cho';b.textContent=fill(o.t);b.style.animationDelay=(i*.1)+'s';b.onclick=()=>{if(c.dataset.lock)return;c.dataset.lock=1;SFX.choice();b.classList.add('pick');logArr.push({n:S.name,t:'▶ '+fill(o.t)});setTimeout(()=>{c.classList.remove('on');delete c.dataset.lock;res(o)},480)};c.appendChild(b)})})}
+function affUp(k,n){if(!n)return;S.aff[k]+=n;if(n>0){SFX.heart();hearts(n);toast(`${CH[k].name}との距離が縮まった ${'♥'.repeat(n)}`);updateNear();restart($('#cm'),'m-near')}}
+
+/* --- script runner --- */
+async function run(list){for(const c of list){await exec(c)}}
+async function exec(c){
+  if(typeof c==='string'){await say(null,null,c);return}
+  if(Array.isArray(c)){const [who,face,text,motion]=c;await say(who,face,text,motion);return}
+  if(c.scene){await scene(c);return}
+  if(c.hide){hideChar();await wait(300);return}
+  if(c.sfx){SFX[c.sfx]&&SFX[c.sfx]();if(c.w)await wait(c.w);return}
+  if(c.wait){await wait(c.wait);return}
+  if(c.flash){flash(c.flash);return}
+  if(c.shake){shake(c.shake);return}
+  if(c.face){showChar(c.face[0],c.face[1],c.face[2]);await wait(c.w||300);return}
+  if(c.bgm){BGM.play(c.bgm);return}
+  if(c.fx){setFX(c.fx);return}
+  if(c.lb!==undefined){$('#game').classList.toggle('lbon',c.lb);return}
+  if(c.box===false){box.classList.add('hide');return}
+  if(c.choice){const o=await choose(c.choice);if(o.a)for(const k in o.a)affUp(k,o.a[k]);if(o.r)await run(o.r);return}
+  if(c.fn){await c.fn();return}
+}
+async function scene(c){box.classList.add('hide');hideChar();await black(true,700);setBG(c.scene,true);setFX(c.fx||'none');$('#tint').style.background=TINT[c.tint||'none'];if(c.bgm)BGM.play(c.bgm);ambience(c.amb||null);if(c.sfx)SFX[c.sfx]();
+  if(c.label){const d=$('#day');d.textContent=c.label;d.style.display='block'}
+  await wait(200);await black(false,1100)}
+
+/* ============ SCRIPT ============ */
+const PRO=[
+  {fn:async()=>{$('#day').style.display='none';setBG('river2',true);setFX('none');await black(true,10)}},
+  {box:false},
+  {bgm:'title'},
+  '春。この街に、引っ越してきた。',
+  '知り合いはひとりもいない。新しい仕事は、来週から。',
+  '……とりあえず、街を歩いてみることにした。',
+  {scene:'book2',fx:'motes',tint:'warm',bgm:'day',sfx:'bell',label:'4月 第1週'},
+  '坂の途中に、古い本屋があった。',
+  'ドアベルの音。紙とインクの、なつかしいにおい。',
+  ['C','n','……いらっしゃいませ。'],
+  '本を抱えた眼鏡の店員さんが、小さく会釈した。',
+  {choice:[
+    {t:'「おすすめの本って、ありますか?」',a:{C:2},r:[['C','surp','えっ。お、おすすめ……ですか?','jump'],['C','fluster','あの、えっと、ちょっと待ってくださいね……!'],'あわあわと棚を見回して、一冊を差し出してくれる。',['C','smile','この街が舞台の小説です。……引っ越してきた方、ですよね? 地図を持ってたので。']]},
+    {t:'「ちょっと見てるだけです」',a:{C:1},r:[['C','n','はい。ごゆっくり。','nod'],'……しばらくして、目の前の台に、そっと一冊が置かれた。',['C','shy','あの……この街が舞台の本です。引っ越してきた方かな、と思って。']]}
+  ]},
+  ['C','smile','月白堂(つきしろどう)の、白石栞です。……また、来てくださいね。'],
+  {scene:'river2',fx:'sunset',tint:'sunset',bgm:'sunset',amb:'river'},
+  '夕方。川沿いの遊歩道に出た。',
+  '空が、溶けたみたいにオレンジ色だ。',
+  {sfx:'can',w:500},
+  '——プシュッ。ベンチで、缶を開ける音がした。',
+  ['B','laugh','っはー! 今日もおつかれ、あたし!','jump'],
+  ['B','surp','……あ。見てた?'],
+  ['B','smug','見られちゃったなら仕方ないなぁ。共犯になってもらおうかな。'],
+  'そう言って、彼女はもう一本の缶をこちらに差し出してきた。',
+  {choice:[
+    {t:'受け取って、乾杯する',a:{B:2},r:[{sfx:'can',w:300},['B','laugh','話がわかる! かんぱーい!','jump'],'カン、と軽い音が夕焼けに響いた。']},
+    {t:'「初対面ですよ?」',a:{B:1},r:[['B','pout','まじめか〜。'],['B','smile','じゃあ、次に会ったときね。そのとき飲も。']]}
+  ]},
+  ['B','smile','あたし、ちなつ。だいたい毎日ここにいるよ。夕焼け描いてるの。'],
+  '膝の上のスケッチブックには、今日の空が描かれていた。',
+  {scene:'street',fx:'rain',tint:'night',bgm:'rain',amb:'rain'},
+  '夜。帰り道で、雨が降りだした。',
+  {sfx:'umbrella'},
+  'コンビニで買ったばかりの傘を開く。……軒下に、スーツ姿の女の人が立っていた。',
+  ['A','sulk','……天気予報、晴れって言ったじゃない。'],
+  ['A','surp','っ、なに? ……見てたの?','shake'],
+  {choice:[
+    {t:'「駅まで、入っていきます?」',a:{A:2},r:[['A','surp','……え。いいの? あなた、濡れるでしょ。'],'結局、駅までひとつの傘で歩いた。肩が少しだけ濡れた。',['A','shy','……ありがと。借りは返す主義なの。']]},
+    {t:'傘を押しつけて、走って帰る',a:{A:1},r:[['A','surp','ちょっ……!','jump'],['A','huff','……もう。名前も聞いてないのに。']]}
+  ]},
+  ['A','smile','……覚えてなさいよ。ちゃんとお礼、するから。'],
+  {hide:1},
+  'その人の名前を知ったのは、三日後。',
+  '新しい職場の、初出勤の日だった。',
+  {fn:async()=>{box.classList.add('hide');await black(true,900)}}
+];
+const EV={
+ A:[
+  [{scene:'street',fx:'rain',tint:'night',bgm:'rain',amb:'rain'},'仕事帰り。今日も雨だ。',['A','n','{N}くん、おつかれ。'],'新人研修の担当は、あの夜の人——早瀬凛先輩だった。',['A','angry','ちょっと。今日の資料、誤字が三つ。……ちゃんと確認しなさい。','shake'],['A','sulk','……で。その、傘なんだけど。'],'先輩の手には、何もない。',['A','huff','……また忘れたの。悪い?'],
+   {choice:[{t:'「どうぞ。入ってください」',a:{A:2},r:[{sfx:'umbrella'},['A','shy','……二回目よ、これ。借り、増える一方じゃない。','sink']]},{t:'「先輩、意外と抜けてますよね」',a:{A:1},r:[['A','angry','なっ……! 会社で言ったら怒るからね!','shake'],['A','laugh','……ふふ。ほんとに、言わないでよ?']]}]},
+   ['A','smile','……{N}くんがいると、雨の日も悪くないかもね。']],
+  [{scene:'cafe',fx:'motes',tint:'warm',bgm:'day'},'休日。駅前のカフェに入ると——',['A','surp','……っ!?','jump'],'窓際の席で、先輩がケーキを三つ並べていた。',['A','huff','……違うの。これは、その。研究よ。新作の。'],
+   {choice:[{t:'「隣、いいですか? 僕もひとつ頼みます」',a:{A:2},r:[['A','surp','……え。'],['A','laugh','……共犯ね。誰にも言っちゃだめよ。','jump']]},{t:'「……三つも食べるんですか」',a:{A:1},r:[['A','angry','食べるわよ! 文句ある!?','shake'],['A','shy','……一個あげるから。内緒にして。']]}]},
+   ['A','smile','会社だと、ずっと気を張ってるから。……ここだけは、素でいられるの。'],'そう言って、先輩は少しだけ照れたように笑った。'],
+  [{scene:'street',fx:'rain',tint:'night',bgm:'sad',amb:'rain'},'夜遅く。オフィスを出ると、先輩が軒下でうつむいていた。',['A','sulk','……今日のミス、私のせい。{N}くんがフォローしてくれなかったら、大変だった。'],['A','sulk','先輩なのに、かっこ悪いでしょ。','sink'],
+   {choice:[{t:'「助けてもらってるのは、いつも僕のほうです」',a:{A:2},r:[['A','surp','……っ。'],['A','shy','……ばか。そういうこと、真顔で言わないで。','sink']]},{t:'「先輩もミスするんですね。ちょっと安心しました」',a:{A:1},r:[['A','huff','……なにそれ。'],['A','laugh','……でも、ちょっと元気出た。']]}]},
+   {bgm:'rain'},['A','smile','……ねえ。今日は、私が傘持ってるの。'],{sfx:'umbrella'},'先輩が、得意げに折りたたみ傘を広げた。',['A','shy','入っていけば? ……借り、返すって言ったでしょ。']]
+ ],
+ B:[
+  [{scene:'river1',fx:'sunset',tint:'sunset',bgm:'sunset',amb:'river'},{sfx:'can',w:300},['B','smile','お、来た来た。{N}くん、こっちこっち!','jump'],'ちなつさんは、今日も夕焼けを描いている。',['B','q','ねえ。今日の空、何色に見える?'],
+   {choice:[{t:'「……ちなつさんの絵の色、かな」',a:{B:2},r:[['B','surp','……っ。','jump'],['B','shy','なにそれ。ずるいなー、もう。','sink']]},{t:'「オレンジ、ですかね」',a:{B:1},r:[['B','laugh','素直! いいね、そういうの。']]}]},
+   ['B','smug','来週も来なよ。今度は、ちゃんとかんぱいしよ。']],
+  [{scene:'cafe',fx:'motes',tint:'warm',bgm:'day'},'カフェの窓際で、ちなつさんが手招きしている。',['B','smug','ちょうどよかった。モデルになってよ。'],'有無を言わさず、スケッチブックが開かれた。',['B','n','動かないでね。……うん、いい顔。'],
+   {choice:[{t:'じっとしている',a:{B:2},r:[{sfx:'page'},'鉛筆の音だけが、しばらく続いた。',['B','shy','……人を描くの、ほんとは苦手なんだ。でも、{N}くんは描きやすい。']]},{t:'「見せてくださいよ」',a:{B:1},r:[['B','pout','だーめ。完成するまで秘密。'],['B','smile','できたら、いちばんに見せてあげる。']]}]}],
+  [{scene:'river3',fx:'sunset',tint:'sunset',bgm:'sad',amb:'river'},'その日のちなつさんは、缶を開けていなかった。',['B','pout','……コンペ、落ちちゃった。'],{sfx:'page'},'スケッチブックのページを、破ろうとする手が止まる。',['B','q','毎日描いてもさ、うまくならないんだよね。……もう、やめよっかな。','sink'],
+   {choice:[{t:'「僕は、ちなつさんの絵が好きです」',a:{B:2},r:[{flash:.5},['B','surp','……え。','jump'],['B','shy','……ほんとに? そっか。……そっかぁ。'],{bgm:'sunset'},['B','laugh','じゃあ、もうちょっとだけ描いてみる!']]},{t:'「……やめちゃうんですか」',a:{B:1},r:[['B','q','……止めてくれないの?'],{bgm:'sunset'},['B','smile','……ううん。そう聞かれたら、やめたくないって思った。ありがと。']]}]},
+   {sfx:'can',w:300},{sfx:'can',w:300},'二本の缶が、夕焼けの中で鳴った。',['B','laugh','かんぱい!','jump']]
+ ],
+ C:[
+  [{scene:'book2',fx:'motes',tint:'warm',bgm:'day',sfx:'bell'},['C','smile','あ……{N}さん。いらっしゃいませ。'],['C','n','前の本、どうでしたか?'],
+   {choice:[{t:'「面白くて、一晩で読みました」',a:{C:2},r:[['C','surp','ほんとですか!','jump'],['C','laugh','あの、あの、三章の橋のところが、わたし大好きで——'],['C','fluster','……あっ。す、すみません。しゃべりすぎました……','shake']]},{t:'「まだ途中なんです」',a:{C:1},r:[['C','smile','ゆっくりでいいんです。本は、逃げませんから。']]}]},
+   ['C','shy','……感想、また聞かせてくださいね。']],
+  [{scene:'cafe',fx:'motes',tint:'warm',bgm:'day'},'カフェで、栞さんとばったり会った。',['C','surp','わ、{N}さん……! 私服、見られちゃいました。','jump'],'エプロン姿じゃない栞さんは、少し新鮮だ。',['C','n','……お店の外でお客さんと話すの、はじめてです。'],
+   {choice:[{t:'「好きな本の話、聞かせてください」',a:{C:2},r:[['C','laugh','いいんですか!? じゃあ、まず——','jump'],'それから二時間、栞さんは目をきらきらさせて話し続けた。',['C','fluster','……はっ。に、二時間!? すみません……!','shake']]},{t:'「なんだか、緊張しますね」',a:{C:1},r:[['C','shy','……はい。わたしも、です。'],['C','smile','でも、いやな緊張じゃないです。']]}]}],
+  [{scene:'book1',fx:'motes',tint:'sunset',bgm:'sad'},'閉店後の月白堂。栞さんに呼ばれて来た。',['C','n','……{N}さんに、読んでほしいものがあって。'],{sfx:'page'},'差し出されたのは、手書きの原稿だった。',['C','sad','わたし、ずっと小説を書いてるんです。誰にも見せたことないけど。'],['C','tear','……下手だって言われたら、どうしようって。','sink'],
+   {choice:[{t:'「読ませてください。最後まで」',a:{C:2},r:[{sfx:'page'},'ページをめくる。坂と、本屋と、夕暮れの話だった。','……読み終えて顔を上げると、栞さんが泣きそうな顔で待っていた。',['N',null,'すごく、よかったです。'],{bgm:'day'},['C','tear','……っ。ありがとう、ございます……']]},{t:'「無理しなくていいですよ」',a:{C:1},r:[['C','sad','……いいえ。{N}さんだから、見てほしいんです。'],{bgm:'day'},'結局、最後まで読ませてもらった。いい話だった。']}]},
+   ['C','shy','この話……まだ、結末が決まってないんです。']]
+ ]
+};
+const EXTRA={
+  A:[{scene:'street',fx:'none',tint:'night',bgm:'rain'},['A','smile','あら、{N}くん。今日は晴れたわね。'],['A','huff','……傘? 持ってるわよ、もう。'],['A','shy','……一緒に帰る口実、なくなっちゃった。','sink'],{fn:()=>affUp('A',1)}],
+  B:[{scene:'river2',fx:'sunset',tint:'sunset',bgm:'sunset',amb:'river'},{sfx:'can',w:300},['B','laugh','{N}くん! 今日も来てくれた!','jump'],['B','smug','なんかさー、最近、夕方が楽しみなんだよね。……なんでだろね?'],{fn:()=>affUp('B',1)}],
+  C:[{scene:'book2',fx:'motes',tint:'warm',bgm:'day',sfx:'bell'},['C','smile','{N}さん。……今日も来てくれたんですね。'],['C','shy','お店のドアベルが鳴るたび、{N}さんかなって思うようになりました。','sink'],{fn:()=>affUp('C',1)}]
+};
+const GOOD={
+ A:{t:'晴れの日の傘',s:[{scene:'river3',fx:'sunset',tint:'sunset',bgm:'love',amb:'river'},{lb:true},'川沿いで待っていると、先輩が走ってきた。',['A','surp','……はぁ、はぁ。……待った?','jump'],'今日は快晴なのに、先輩の手には傘が握られていた。',['N',null,'……先輩、それ。'],['A','huff','わ、私が持ってると降らないの! ジンクス!','shake'],['A','sulk','……{N}くんの前だと、ずっと調子狂うのよ。'],['A','n','会社ではちゃんとしてなきゃって、ずっと思ってた。……でも、{N}くんの前だと、ケーキ三つ食べる私でいられる。'],{sfx:'beat',w:700},{sfx:'beat',w:700},['A','shy','……好き。借りとかじゃなくて。……となりに、いてほしい。','near'],
+  {choice:[{t:'「僕も、先輩が好きです」'},{t:'「……凛さん、って呼んでもいいですか」'}]},{flash:.9},{fx:'sparkle'},{sfx:'chime'},['A','laugh','……ばか。……うん。','jump'],'夕焼けの中、閉じたままの傘をふたりで持って、並んで帰った。']},
+ B:{t:'ふたりの夕焼け',s:[{scene:'river2',fx:'sunset',tint:'sunset',bgm:'love',amb:'river'},{lb:true},'いつものベンチに、ちなつさんがいた。缶は、二本。',['B','smile','来ると思った。'],{sfx:'page'},'スケッチブックを渡される。ページをめくると——','どのページにも、僕がいた。',['B','shy','……人を描くの苦手って、言ったでしょ。なのに気づいたら、{N}くんばっかり描いてた。','sink'],{sfx:'beat',w:700},{sfx:'beat',w:700},['B','pout','……責任、とってよね。'],
+  {choice:[{t:'「とります」'},{t:'「これからも、描いてください」'}]},{flash:.9},{fx:'sparkle'},{sfx:'chime'},['B','surp','……ほんとに? 言ったね? 毎日描くよ?','jump'],['B','laugh','……好き。かんぱい、しよ!'],{sfx:'can',w:400},'夕焼けの真ん中で、ふたつの缶が鳴った。']},
+ C:{t:'最後のページ',s:[{scene:'river1',fx:'sunset',tint:'sunset',bgm:'love',amb:'river'},{lb:true},'栞さんに呼ばれたのは、本屋ではなく、川沿いの道だった。',['C','n','……あの話の結末、書けました。'],{sfx:'page'},'最後のページ。主人公の女の子が、夕暮れの橋の見える道で、想いを伝える場面。',['C','shy','……モデル、わかりますか。','sink'],{sfx:'beat',w:700},{sfx:'beat',w:700},['C','tear','{N}さんのことが、好きです。……物語の中じゃなくて、ここで言いたかった。','near'],
+  {choice:[{t:'「続きは、ふたりで書きましょう」'},{t:'「僕も、栞さんが好きです」'}]},{flash:.9},{fx:'sparkle'},{sfx:'chime'},['C','laugh','……はい!','jump'],'白紙だった次のページに、栞さんが小さく、日付を書いた。']}
+};
+const NORMAL={A:[['A','smile','誘ってくれてありがと。……また会社でね、{N}くん。']],B:[['B','smile','夕焼け、きれいだったね。またね、{N}くん。']],C:[['C','smile','今日は、ありがとうございました。……また、お店で。']]};
+
+/* ============ flow ============ */
+async function startNew(){S=newState();LS.del('save');show('#nameScr')}
+$('#nameOk').onclick=async()=>{audio();SFX.choice();const v=$('#nameIn').value.trim().slice(0,8);S.name=v||'ハルト';hide('#nameScr');await playPro()};
+async function playPro(){hide('#title');ui(true);await run(PRO);S.turn=0;save();mapScr()}
+function save(){LS.set('save',S)}
+function ui(on){$('#ui').style.display=on?'flex':'none'}
+function show(s){$(s).classList.add('on')}function hide(s){$(s).classList.remove('on')}
+function heartStr(a){const n=clamp(Math.round(a*5/8),0,5);return '♥'.repeat(n)+'♡'.repeat(5-n)}
+async function mapScr(){box.classList.add('hide');hideChar();$('#game').classList.remove('lbon');
+  if(S.turn>=TURNS.length){return finale()}
+  setBG('river1',true);setFX('none');$('#tint').style.background=TINT.dim;BGM.play('title');ambience(null);await black(false,600);$('#day').style.display='none';
+  const m=$('#map');m.innerHTML=`<h2>${TURNS[S.turn]}</h2><div class="msub">どこへ行こう?(のこり${TURNS.length-S.turn}回)</div>`;
+  ['C','B','A'].forEach((k,i)=>{const c=CH[k];const b=document.createElement('button');b.className='card';b.style.animationDelay=(i*.12)+'s';
+    b.innerHTML=`<div class="cbg" style="background-image:url(img/${c.bg}.webp)"></div><div class="cv"></div><img class="cf" src="img/f/${k}_${S.aff[k]>=5?'smile':'n'}.webp"><div class="ct"><b>${c.place}</b><span>${c.placeSub}・${c.name}</span></div><div class="hs">${heartStr(S.aff[k])}</div>`;
+    b.onclick=async()=>{SFX.choice();hide('#map');await visit(k)};m.appendChild(b)});
+  show('#map')}
+async function visit(k){const n=S.ev[k];const label=TURNS[S.turn];
+  let sc=n<3?EV[k][n]:EXTRA[k];sc=sc.slice();if(sc[0].scene)sc[0]=Object.assign({},sc[0],{label});
+  if(n<3)S.ev[k]++;await run(sc);S.turn++;save();await black(true,700);mapScr()}
+async function finale(){setBG('river2',true);setFX('sunset');$('#tint').style.background=TINT.sunset;BGM.play('sunset');await black(false,900);$('#day').textContent='5月 第2週';$('#day').style.display='block';
+  await run(['連休最後の日。窓の外が、夕焼けに染まりはじめた。','この街に来て、ひと月。……会いたい人がいる。']);box.classList.add('hide');
+  const m=$('#map');m.innerHTML=`<h2>最後の夕暮れ</h2><div class="msub">誰に会いに行く?</div>`;
+  ['C','B','A'].forEach((k,i)=>{const c=CH[k];const b=document.createElement('button');b.className='card';b.style.animationDelay=(i*.12)+'s';b.innerHTML=`<div class="cbg" style="background-image:url(img/${GOODBG[k]}.webp)"></div><div class="cv"></div><img class="cf" src="img/f/${k}_smile.webp"><div class="ct"><b>${c.full}</b><span>${c.placeSub}</span></div><div class="hs">${heartStr(S.aff[k])}</div>`;
+    b.onclick=async()=>{SFX.choice();hide('#map');await ending(k)};m.appendChild(b)});show('#map')}
+const GOODBG={A:'river3',B:'river2',C:'river1'};
+async function ending(k){const ok=S.aff[k]>=6&&S.ev[k]>=3;
+  if(ok){await run(GOOD[k].s);ENDS[k]=1;LS.set('ends',ENDS);await endCard('HAPPY END',GOOD[k].t,`${CH[k].full}エンド`)}
+  else{await run([{scene:GOODBG[k],fx:'sunset',tint:'sunset',bgm:'sad',amb:'river'}].concat(NORMAL[k],['……なにか、言えなかった言葉がある気がした。','もう少し、一緒に過ごす時間があれば——']));ENDS.N=1;LS.set('ends',ENDS);await endCard('NORMAL END','またね',`ヒント:${CH[k].name}にもっと会いに行こう`)}
+  LS.del('save')}
+async function endCard(kind,title,sub){box.classList.add('hide');await wait(1200);await black(true,1500);hideChar();$('#game').classList.remove('lbon');ui(false);$('#day').style.display='none';
+  const e=$('#endScr');e.innerHTML=`<div class="et">${kind}</div><h2>${title}</h2><p>${sub}</p><button class="tbtn" style="margin-top:24px">タイトルへ</button>`;show('#endScr');$('#black').style.opacity=0;
+  await new Promise(r=>e.querySelector('button').onclick=r);SFX.choice();hide('#endScr');titleScr()}
+function titleScr(){ambience(null);setFX('none');box.classList.add('hide');hideChar();ui(false);$('#day').style.display='none';$('#black').style.opacity=0;show('#title');
+  const tm=$('#tmenu');const sv=LS.get('save',null);const got=['A','B','C','N'].filter(k=>ENDS[k]).length;
+  tm.innerHTML=`<button class="tbtn" id="tNew">はじめから</button>${sv?'<button class="tbtn" id="tCont">つづきから</button>':''}<button class="tbtn sub" id="tEnd">エンディング ${got}/4</button>`;
+  $('#tNew').onclick=()=>{SFX.choice();startNew()};if(sv)$('#tCont').onclick=async()=>{SFX.choice();S=sv;hide('#title');ui(true);await black(true,500);mapScr()};
+  $('#tEnd').onclick=()=>{SFX.choice();const el=$('#endList');const rows=[['A','晴れの日の傘(凛)'],['B','ふたりの夕焼け(ちなつ)'],['C','最後のページ(栞)'],['N','またね']];el.innerHTML=`<h2 style="font-family:'Shippori Mincho',serif;letter-spacing:.15em;margin-bottom:6px">エンディング</h2>`+rows.map(([k,n])=>`<div class="er ${ENDS[k]?'got':''}"><span>${ENDS[k]?n:'？？？'}</span><span>${ENDS[k]?'♥':''}</span></div>`).join('')+'<button class="tbtn sub" style="margin-top:14px">もどる</button>';show('#endList');el.querySelector('button').onclick=()=>{SFX.choice();hide('#endList')}};
+  BGM.play('title')}
+
+/* ============ ui buttons ============ */
+$('#bAuto').onclick=e=>{e.stopPropagation();auto=!auto;$('#bAuto').classList.toggle('on',auto);if(auto&&waitTap){const w=waitTap;waitTap=null;w()}};
+$('#bSkip').onclick=e=>{e.stopPropagation();skip=!skip;$('#bSkip').classList.toggle('on',skip);if(skip){typing=false;if(waitTap){const w=waitTap;waitTap=null;w()}}};
+$('#bMute').onclick=e=>{e.stopPropagation();muted=!muted;LS.set('muted',muted);if(MG)MG.gain.value=muted?0:.9;$('#bMute').classList.toggle('on',muted)};
+$('#bLog').onclick=e=>{e.stopPropagation();const l=$('#log');l.innerHTML='<button class="close">とじる</button>'+logArr.slice(-80).map(x=>`<div class="ll">${x.n?`<b>${x.n}</b>`:''}${x.t.replace(/</g,'&lt;')}</div>`).join('');l.classList.add('on');l.scrollTop=l.scrollHeight;l.querySelector('.close').onclick=()=>l.classList.remove('on')};
+$('#bMute').classList.toggle('on',muted);
+
+/* ============ boot ============ */
+let last=performance.now();
+function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;try{drawFX(dt,now/1000)}catch(e){showErr(e)}requestAnimationFrame(loop)}
+resize();requestAnimationFrame(loop);
+show('#title');$('#black').style.opacity=0;
+$('#title').addEventListener('click',function first(){audio();BGM.play('title');SFX.chime();$('#title').removeEventListener('click',first);setTimeout(titleScr,50)},{once:false});
+window.__dbg={get S(){return S},set S(v){S=v},EV,run,mapScr,ending,finale};
+})();
+</script>
 </body>
 </html>
