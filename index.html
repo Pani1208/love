@@ -127,7 +127,7 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
     <div class="logo"><h1>夕暮れ、<br>となりで。<small>YUUGURE TONARI DE</small></h1></div>
     <div class="tmenu" id="tmenu"><div class="tap2">― TAP TO START ―</div></div>
   </div>
-  <div class="scr" id="nameScr"><p>あなたの名前を教えてください<br><span style="font-size:12px;opacity:.7">(8文字まで・あとから変えられません)</span></p><input id="nameIn" maxlength="8" value="ハルト"><button class="tbtn" id="nameOk">決定</button></div>
+  <div class="scr" id="nameScr"><p>あなたの名前を教えてください<br><span style="font-size:12px;opacity:.7">(8文字まで・あとから変えられません)</span></p><input id="nameIn" maxlength="8" value="なおき"><button class="tbtn" id="nameOk">決定</button></div>
   <div class="scr" id="map"></div>
   <div class="scr" id="endScr"></div>
   <div class="scr" id="endList"></div>
@@ -233,7 +233,7 @@ function drawFX(dt,t){cx.setTransform(DPR,0,0,DPR,0,0);cx.clearRect(0,0,W,H);
 
 /* ============ state ============ */
 let S=null;
-const newState=()=>({name:'ハルト',turn:0,aff:{A:0,B:0,C:0},ev:{A:0,B:0,C:0}});
+const newState=()=>({name:'なおき',turn:0,aff:{A:0,B:0,C:0},ev:{A:0,B:0,C:0}});
 const ENDS=LS.get('ends',{});
 const TURNS=['4月 第2週','4月 第3週','4月 第4週','5月 第1週'];
 
@@ -259,7 +259,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,skip?Math.min(ms,30):ms));
 /* --- text --- */
 let typing=false,typeDone=null,fullText='',auto=false,skip=false,waitTap=null,logArr=[];
 const box=$('#box'),tx=$('#text'),nm=$('#name'),nxt=$('#next');
-function fill(s){return s.replace(/\{N\}/g,S?S.name:'ハルト')}
+function fill(s){return s.replace(/\{N\}/g,S?S.name:'なおき')}
 function say(who,face,text,motion){return new Promise(async res=>{
   text=fill(text);let pitch=440,label='';
   if(who&&CH[who]){label=CH[who].name;pitch=CH[who].pitch;showChar(who,face,motion)}else if(who==='N'){label=S.name;pitch=360}else if(who){label=who}
@@ -403,7 +403,7 @@ const NORMAL={A:[['A','smile','誘ってくれてありがと。……また会�
 
 /* ============ flow ============ */
 async function startNew(){S=newState();LS.del('save');show('#nameScr')}
-$('#nameOk').onclick=async()=>{audio();SFX.choice();const v=$('#nameIn').value.trim().slice(0,8);S.name=v||'ハルト';hide('#nameScr');await playPro()};
+$('#nameOk').onclick=async()=>{audio();SFX.choice();const v=$('#nameIn').value.trim().slice(0,8);S.name=v||'なおき';hide('#nameScr');await playPro()};
 async function playPro(){hide('#title');ui(true);await run(PRO);S.turn=0;save();mapScr()}
 function save(){LS.set('save',S)}
 function ui(on){$('#ui').style.display=on?'flex':'none'}
