@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>love(仮) — 制作中</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&family=Shippori+Mincho:wght@600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#2a1a2e;font-family:'Zen Maru Gothic',sans-serif;color:#fff}
+.bg{position:fixed;inset:-4%;background:url(img/bg.webp) center/cover;animation:zoom 30s ease-in-out infinite alternate}
+@keyframes zoom{to{transform:scale(1.08) translateX(-2%)}}
+.veil{position:fixed;inset:0;background:linear-gradient(180deg,rgba(40,20,60,.15),rgba(40,20,60,.05) 40%,rgba(30,10,40,.7))}
+.chars{position:fixed;left:0;right:0;bottom:0;height:78vh;display:flex;justify-content:center;align-items:flex-end;pointer-events:none}
+.chars img{height:100%;max-width:40vw;object-fit:contain;object-position:bottom;margin:0 -4vw;filter:drop-shadow(0 6px 18px rgba(0,0,0,.35));opacity:0;animation:in 1.2s ease-out forwards}
+.chars img:nth-child(1){animation-delay:.3s}.chars img:nth-child(2){animation-delay:.6s;z-index:2}.chars img:nth-child(3){animation-delay:.9s}
+@keyframes in{from{opacity:0;transform:translateY(20px)}to{opacity:1}}
+.t{position:fixed;top:8vh;left:0;right:0;text-align:center;text-shadow:0 2px 12px rgba(80,20,60,.8)}
+.t h1{font-family:'Shippori Mincho',serif;font-size:clamp(38px,9vw,72px);letter-spacing:.1em}
+.t p{margin-top:10px;font-size:15px;opacity:.9}
+.badge{display:inline-block;margin-top:16px;padding:6px 18px;border:1px solid #fff8;border-radius:999px;background:#fff2;backdrop-filter:blur(4px);font-weight:700}
+.petal{position:fixed;top:-20px;width:6px;height:6px;border-radius:50%;background:#ffd9a8;opacity:.8;animation:fall linear infinite}
+@keyframes fall{to{transform:translate(-60px,110vh)}}
+</style>
+</head>
+<body>
+<div class="bg"></div><div class="veil"></div>
+<div class="t"><h1>love(仮)</h1><p>夕暮れの街で出会う、3人との物語</p><span class="badge">ただいま制作中</span></div>
+<div class="chars"><img src="img/C.webp" alt=""><img src="img/A.webp" alt=""><img src="img/B.webp" alt=""></div>
+<script>for(let i=0;i<18;i++){const p=document.createElement('div');p.className='petal';p.style.left=Math.random()*110+'%';p.style.animationDuration=(8+Math.random()*8)+'s';p.style.animationDelay=(-Math.random()*16)+'s';document.body.appendChild(p)}</script>
+</body>
+</html>
