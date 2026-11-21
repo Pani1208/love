@@ -13,7 +13,7 @@
 html,body{height:100%;overflow:hidden;background:#000;font-family:'Zen Maru Gothic',sans-serif;color:#fff;user-select:none;-webkit-user-select:none}
 button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none}
 #game{position:fixed;inset:0;max-width:520px;margin:0 auto;overflow:hidden;background:#000}
-.bgl{position:absolute;inset:-6%;background-size:cover;background-position:50% 50%;opacity:0;transition:opacity 1.2s ease;will-change:transform,opacity}
+.bgl{position:absolute;inset:-6%;background-size:cover;background-repeat:no-repeat;background-position:50% 50%;opacity:0;transition:opacity 1.2s ease}
 .bgl.on{opacity:1}
 .bgl.pan{animation:pan 46s ease-in-out infinite alternate}
 @keyframes pan{0%{background-position:22% 50%;transform:scale(1.04)}100%{background-position:78% 50%;transform:scale(1.12)}}
@@ -22,7 +22,7 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 #vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(0,0,0,.55))}
 #chars{position:absolute;left:50%;bottom:22%;width:min(108%,500px);transform:translateX(-50%);pointer-events:none;aspect-ratio:1/1}
 #chars .cw{position:absolute;inset:0;transition:transform .9s cubic-bezier(.2,.8,.2,1),opacity .5s}
-#chars img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:bottom;transition:opacity .28s;filter:drop-shadow(0 8px 20px rgba(0,0,0,.35))}
+#chars img:not([src]){display:none}#chars img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:bottom;transition:opacity .28s;filter:drop-shadow(0 8px 20px rgba(0,0,0,.35))}
 .m-in{animation:m-in .6s cubic-bezier(.2,.9,.3,1)}@keyframes m-in{from{opacity:0;transform:translateY(24px)}}
 .m-jump{animation:m-jump .45s cubic-bezier(.3,1.6,.5,1)}@keyframes m-jump{40%{transform:translateY(-22px)}}
 .m-shake{animation:m-shake .4s}@keyframes m-shake{20%{transform:translateX(-10px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(3px)}}
@@ -112,7 +112,7 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 <div id="game">
   <div class="bgl" id="bg0"></div><div class="bgl" id="bg1"></div>
   <div id="tint"></div>
-  <div id="chars"><div class="cw" id="cw"><div id="cm" style="position:absolute;inset:0"><img id="ci0" alt=""><img id="ci1" alt="" style="opacity:0"></div></div></div>
+  <div id="chars"><div class="cw" id="cw" style="opacity:0"><div id="cm" style="position:absolute;inset:0"><img id="ci0" alt=""><img id="ci1" alt="" style="opacity:0"></div></div></div>
   <canvas id="fx"></canvas>
   <div id="vig"></div>
   <div class="lb" id="lbT"></div><div class="lb" id="lbB"></div>
@@ -306,7 +306,7 @@ async function scene(c){box.classList.add('hide');hideChar();await black(true,70
 
 /* ============ SCRIPT ============ */
 const PRO=[
-  {fn:async()=>{$('#day').style.display='none';setBG('river2',true);setFX('none');await black(true,10)}},
+  {fn:async()=>{$('#day').style.display='none';setBG('river2',true);setFX('sunset');$('#tint').style.background=TINT.dim;await black(false,1200)}},
   {box:false},
   {bgm:'title'},
   '春。この街に、引っ越してきた。',
